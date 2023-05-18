@@ -11,7 +11,7 @@ export async function authValidation(req, res, next) {
     ]);
     if (!session) return res.status(401).send("Sessão expirada");
 
-    res.locals.session = session;
+    res.locals.session = session.rows[0];
 
     next();
   } catch (err) {

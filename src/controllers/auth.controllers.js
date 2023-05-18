@@ -7,7 +7,7 @@ export async function signUp(req, res) {
 
   try {
     const user = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
-    if (user) return res.status(409).send("E-mail ja cadastrado");
+    if (user.rows[0] != null) return res.status(409).send("E-mail já cadastrado");
 
     const hash = bcrypt.hashSync(password, 10);
 
@@ -26,17 +26,17 @@ export async function signIn(req, res) {
 
   try {
     const user = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
-    if (!user) return res.status(404).send("Esse e-mail não foi cadastrado");
+    if (!user.rows[0]) return res.status(404).send("Esse e-mail não foi cadastrado");
 
-    const passwordCorrect = bcrypt.compareSync(password, user.password);
+    const passwordCorrect = bcrypt.compareSync(password, user.rows[0].password);
     if (!passwordCorrect) return res.status(401).send("Senha incorreta");
 
     const token = uuid();
-    await db.query(`INSERT INTO sessions (token, userId) VALUES ($1, $2)`, [
+    await db.query(`INSERT INTO sessions (token, "userId") VALUES ($1, $2)`, [
       token,
       user.rows[0].id,
     ]);
-    res.send({ token, userName: user.name, userId: user._id });
+    res.send({ token, userName: user.rows[0].name, userId: user.rows[0].id });
   } catch (err) {
     res.status(500).send(err.message);
   }
