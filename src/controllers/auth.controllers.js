@@ -6,7 +6,7 @@ export async function signUp(req, res) {
   const { email, password, name } = req.body;
 
   try {
-    const user = await db.query(`SELECT * FROM user WHERE email = $1`, [email]);
+    const user = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
     if (user) return res.status(409).send("E-mail ja cadastrado");
 
     const hash = bcrypt.hashSync(password, 10);
@@ -25,7 +25,7 @@ export async function signIn(req, res) {
   const { email, password } = req.body;
 
   try {
-    const user = await db.query(`SELECT * FROM user WHERE email = $1`, [email]);
+    const user = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
     if (!user) return res.status(404).send("Esse e-mail não foi cadastrado");
 
     const passwordCorrect = bcrypt.compareSync(password, user.password);
