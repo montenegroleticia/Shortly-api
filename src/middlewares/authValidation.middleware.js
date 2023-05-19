@@ -9,7 +9,7 @@ export async function authValidation(req, res, next) {
     const session = await db.query(`SELECT * FROM sessions WHERE token = $1`, [
       token,
     ]);
-    if (!session) return res.status(401).send("Sessão expirada");
+    if (session.rows.length === 0) return res.status(401).send("Sessão expirada");
 
     res.locals.session = session.rows[0];
 
