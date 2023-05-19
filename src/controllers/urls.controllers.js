@@ -44,6 +44,7 @@ export async function getOpenUrl(req, res) {
       `UPDATE urls SET "visitsCount" = "visitsCount"+1 WHERE "shortUrl" = $1 RETURNING url`,
       [shortUrl]
     );
+
     if (url.rowCount === 0) return res.sendStatus(404);
 
     res.redirect(url.rows[0].url);
