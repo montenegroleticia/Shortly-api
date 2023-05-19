@@ -32,7 +32,7 @@ export async function signIn(req, res) {
       email,
     ]);
     if (!user.rows[0])
-      return res.status(404).send("Esse e-mail não foi cadastrado");
+      return res.status(401).send("Esse e-mail não foi cadastrado");
 
     const passwordCorrect = bcrypt.compareSync(password, user.rows[0].password);
     if (!passwordCorrect) return res.status(401).send("Senha incorreta");
