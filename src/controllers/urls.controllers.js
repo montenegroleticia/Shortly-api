@@ -40,16 +40,13 @@ export async function getOpenUrl(req, res) {
   const { shortUrl } = req.params;
 
   try {
-    await db.query(
-      `UPDATE urls SET "visitsCount" = "visitsCount"+1 WHERE shortUrl = $1`,
+    const url = await db.query(
+      `UPDATE urls SET "visitsCount" = "visitsCount"+1 WHERE shortUrl = $1 RETURNING url`,
       [shortUrl]
     );
-    const urlById = await db.query(`SELECT * FROM urls WHERE "shortUrl" = $1`, [
-      shortUrl,
-    ]);
-    if (urlById.rows.length === 0) return res.sendStatus(404);
+    if (url.rowCount === 0) return res.sendStatus(404);
 
-    res.status(200).send(urlById.rows[0]);
+    res.redirect(url.rows[0].url);
   } catch (err) {
     res.status(500).send(err.message);
   }
