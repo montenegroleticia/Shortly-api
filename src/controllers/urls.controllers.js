@@ -41,7 +41,7 @@ export async function getOpenUrl(req, res) {
 
   try {
     const url = await db.query(
-      `UPDATE urls SET "visitsCount" = "visitsCount"+1 WHERE shortUrl = $1 RETURNING url`,
+      `UPDATE urls SET "visitsCount" = "visitsCount"+1 WHERE "shortUrl" = $1 RETURNING url`,
       [shortUrl]
     );
     if (url.rowCount === 0) return res.sendStatus(404);
@@ -59,10 +59,11 @@ export async function deleteUrlById(req, res) {
     const { userId } = res.locals.session;
 
     const urlById = await db.query(
-      `DELETE FROM urls WHERE id = $1 AND "userId" = $2`,
+      `DELETE FROM urls WHERE id = $1 AND "userId" = $2 RETURNING *`,
       [id, userId]
     );
-    if (urlById.rowCount > 0) return res.sendStatus(404);
+
+    if (urlById.rowCount === 0) return res.sendStatus(404);
 
     res.sendStatus(204);
   } catch (err) {
