@@ -59,12 +59,16 @@ export async function deleteUrlById(req, res) {
   try {
     const { userId } = res.locals.session;
 
-    const urlById = await db.query(
+    const urlById = await db.query(`SELECT * FROM urls WHERE id = $1;`, [id]);
+
+    if (urlById.rowCount === 0) return res.sendStatus(404);
+
+    const urlByUser = await db.query(
       `DELETE FROM urls WHERE id = $1 AND "userId" = $2 RETURNING *`,
       [id, userId]
     );
 
-    if (urlById.rowCount === 0) return res.sendStatus(404);
+    if (urlByUser.rowCount === 0) return res.sendStatus(401);
 
     res.sendStatus(204);
   } catch (err) {
