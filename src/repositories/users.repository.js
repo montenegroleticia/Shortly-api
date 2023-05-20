@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
-export function getUserDB(userId) {
-  const result = db.query(
+export async function getUserDB(userId) {
+  const result = await db.query(
     ` SELECT
         users.id,
         users.name,
@@ -23,8 +23,8 @@ export function getUserDB(userId) {
   return result;
 }
 
-export function getRankingDB() {
-  const result = db.query(
+export async function getRankingDB() {
+  const result = await db.query(
     `SELECT users.id, users.name, COUNT(urls.id) AS "linksCount", SUM(urls."visitsCount") AS "visitCount"
         FROM users
         LEFT JOIN urls ON users.id = urls."userId"
