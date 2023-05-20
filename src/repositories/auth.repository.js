@@ -1,6 +1,6 @@
 import { db } from "../database/database.connection.js";
 
-export function checkingEmail(email) {
+export function checkingEmailDB(email) {
   const result = db.query(`SELECT * FROM users WHERE email = $1`, [email]);
   return result;
 }

@@ -1,5 +1,5 @@
 import {
-  checkingEmail,
+  checkingEmailDB,
   logOutDB,
   signInDB,
   signUpDB,
@@ -11,7 +11,7 @@ export async function signUp(req, res) {
   const { email, password, name } = req.body;
 
   try {
-    const user = await checkingEmail(email);
+    const user = await checkingEmailDB(email);
     if (user.rows[0] != null)
       return res.status(409).send("E-mail já cadastrado");
 
@@ -29,7 +29,7 @@ export async function signIn(req, res) {
   const { email, password } = req.body;
 
   try {
-    const user = await checkingEmail(email);
+    const user = await checkingEmailDB(email);
     if (!user.rows[0])
       return res.status(401).send("Esse e-mail não foi cadastrado");
 
